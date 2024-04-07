@@ -136,14 +136,19 @@ const express = require('express');
 const mongoose = require('mongoose');
 const multer = require('multer');
 const cors = require('cors');
+const http = require('http');
+const socketio = require('socket.io');
 const path = require('path');
 const User = require('./models/user');
 require('dotenv').config();
 const app = express();
 const upload = multer();
 
+const server = http.createServer(app);
+const io = socketio(server);
+
 app.use(express.json());
-app.use(cors({ origin: 'http://localhost:5173' }));
+app.use(cors({ origin: 'https://sportz-front.onrender.com/' }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 mongoose.connect(process.env.MONGODB_URI, {
@@ -152,6 +157,23 @@ mongoose.connect(process.env.MONGODB_URI, {
 })
 .then(() => console.log('Connected to MongoDB Atlas'))
 .catch(error => console.error('Error connecting to MongoDB Atlas:', error));
+
+// Socket.io message handling
+// Assuming you already have socket.io initialized
+
+io.on('connection', (socket) => {
+  console.log('New client connected');
+
+  socket.on('disconnect', () => {
+      console.log('Client disconnected');
+  });
+
+  socket.on('send message', (data) => {
+      // Broadcast the message to all connected clients
+      io.emit('receive message', data);
+  });
+});
+
 
 
 // Follow a user
