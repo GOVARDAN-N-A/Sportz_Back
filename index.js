@@ -148,7 +148,7 @@ const server = http.createServer(app);
 const io = socketio(server);
 
 app.use(express.json());
-app.use(cors({ origin: ['https://sportz-front.onrender.com/', 'http://10.220.197.84:5173'] }));
+app.use(cors({ origin: 'https://sportz-front.netlify.app' }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 mongoose.connect(process.env.MONGODB_URI)
